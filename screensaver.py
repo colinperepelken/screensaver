@@ -32,7 +32,12 @@ class App():
         print("Updating weather")
         api_key = "f5988e28703d9fdcb99201c66e8eabcf"
         city = "Kelowna"
-        response = requests.get("http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + api_key)
+        response = {}
+        try:
+          response = requests.get("http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + api_key)
+        except:
+          print("Exception occured while getting weather.")
+
 
         res_json = json.loads(response.content.decode('utf-8'))
 
