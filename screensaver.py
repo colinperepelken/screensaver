@@ -8,20 +8,25 @@ from datetime import datetime
 class App():
     def __init__(self):
         self.root = Tk()
-        self.label = Label(text="")
-        self.label.pack(expand=True)
+        self.weatherLabel = Label(text="")
+        self.busLabel = Label(text="")
+        self.weatherLabel.pack(expand=True)
+        self.busLabel.pack(expand=True)
         self.root.title("Screensaver")
         self.root.geometry("700x300")
         self.root.attributes("-fullscreen", True)
         self.root.configure(background="black")
-        self.label.configure(fg="white", background="black")
-        self.label.configure(font=("Courier", 44))
-        self.update_weather()
+        self.weatherLabel.configure(fg="white", background="black")
+        self.weatherLabel.configure(font=("Courier", 44))
+        self.busLabel.configure(fg="white", background="black")
+        self.busLabel.configure(font=("Courier", 44))
+        self.update()
         self.root.mainloop()
 
-    def update_weather(self):
-        self.get_weather()
-        self.root.after(5000, self.update_weather)
+    def update(self):
+        self.weatherLabel.configure(text=self.get_weather())
+        self.busLabel.configure(text=self.get_next_bus_departure_time())
+        self.root.after(5000, self.update)
 
     def get_weather(self):
         print("Updating weather")
@@ -39,8 +44,7 @@ class App():
         low_temp_text = "Low: " + str(low_temp) + " °C\n"
         high_temp_text = "High: " + str(high_temp) + " °C"
         text = weather_text + low_temp_text + high_temp_text
-        self.label.configure(text=text + "\nNext bus: " + self.get_next_bus_departure_time())
-
+        return text        
     #
     # Returns the next bus departure time as a string.
     # From the Artium Student Residence to UBCO.
@@ -59,8 +63,7 @@ class App():
                                             departure_time=now)
 
         # Retrieve departure time and return string.
-        return directions_result[0]['legs'][0]['departure_time']['text']
-
-      
+        return "Next bus: " + directions_result[0]['legs'][0]['departure_time']['text']
+ 
 
 app = App()
