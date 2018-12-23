@@ -1,19 +1,25 @@
 import requests
 import json
-from tkinter import Tk, Label
+from tkinter import *
 import googlemaps
 from datetime import datetime
+from PIL import Image, ImageTk
+
 
 
 class App():
     def __init__(self):
         self.root = Tk()
-        self.weatherLabel = Label(text="")
+        
+        self.weatherFrame = Frame(self.root, bg="black")
+        self.weatherLabel = Label(self.weatherFrame, text="")
+        self.weatherIcon = Label(self.weatherFrame, borderwidth=0)
+
         self.busLabel = Label(text="")
-        self.weatherIcon = Label()
-        self.weatherLabel.pack(expand=True)
-        self.weatherIcon.pack()
-        self.busLabel.pack(expand=True)
+        self.weatherFrame.pack(side=TOP)
+        self.weatherLabel.pack(side=LEFT, fill=NONE)
+        self.weatherIcon.pack(side=LEFT, fill=NONE)
+        self.busLabel.pack(pady=100)
         self.root.title("Screensaver")
         self.root.geometry("700x300")
         self.root.attributes("-fullscreen", True)
@@ -44,14 +50,12 @@ class App():
         current_temp = int(round(res_json["main"]["temp"] - 273.15, 0))
         current_weather = res_json["weather"][0]["main"]
         
-        from PIL import Image, ImageTk
 
-        image = Image.open("images/rain.png")#(self.get_weather_icon(current_weather))
+        image = Image.open(self.get_weather_icon(current_weather))
         image = image.resize((100, 100), Image.ANTIALIAS)
         photo = ImageTk.PhotoImage(image=image)
 
         self.weatherIcon.configure(image=photo)
-        self.weatherIcon.pack()
         self.weatherIcon.image = photo
 
 
