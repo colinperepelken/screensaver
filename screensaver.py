@@ -1,3 +1,4 @@
+#importing
 import requests
 import json
 from tkinter import Tk, Label
@@ -12,7 +13,7 @@ class App():
         self.busLabel = Label(text="")
         self.weatherLabel.pack(expand=True)
         self.busLabel.pack(expand=True)
-        self.root.title("Screensaver")
+        self.root.title("Live Screen")
         self.root.geometry("700x300")
         self.root.attributes("-fullscreen", True)
         self.root.configure(background="black")
