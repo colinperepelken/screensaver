@@ -25,7 +25,7 @@ class App():
       city = "Kelowna"
       response = requests.get("http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + api_key)
 
-      res_json = json.loads(response.content)
+      res_json = json.loads(response.content.decode('utf-8'))
 
       weather = "Weather: " + res_json["weather"][0]["main"] + "\n"
       low_temp = "Low: " + str(res_json["main"]["temp_min"] - 273.15)  + "\n"
