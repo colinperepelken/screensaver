@@ -3,6 +3,7 @@ import json
 from tkinter import Tk, Label
 import googlemaps
 from datetime import datetime
+import yaml
 
 
 class App():
@@ -24,6 +25,7 @@ class App():
         self.root.after(5000, self.update_weather)
 
     def get_weather(self):
+        global config
         print("Updating weather")
         api_key = "f5988e28703d9fdcb99201c66e8eabcf"
         city = "Kelowna"
@@ -47,9 +49,11 @@ class App():
     # Next bus time relies on current time.
     #
     def get_next_bus_departure_time(self):
+        global config
+        print("Updating bus departure time")
 
         # Initialize Google Maps API.
-        gmaps = googlemaps.Client(key='AIzaSyCZ_3BKxqS5_SS41sUchUUfd6Sq4jiY6-A')
+        gmaps = googlemaps.Client(key="%s" % config['google_maps_api_key'])
 
         # Request directions via public transit.
         now = datetime.now()
@@ -61,6 +65,8 @@ class App():
         # Retrieve departure time and return string.
         return directions_result[0]['legs'][0]['departure_time']['text']
 
-      
 
+# Load config and app
+config = yaml.safe_load(open("config.yml"))
+print(config['google_maps_api_key'])
 app = App()

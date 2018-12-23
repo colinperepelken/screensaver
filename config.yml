@@ -1,0 +1,7 @@
+transit_settings:
+  home_location: The Artium Student Residence, Kelowna, BC
+  destination_location: UBC Okanagan, Kelowna, BC
+weather_settings:
+  city: Kelowna
+
+google_maps_api_key: AIzaSyCZ_3BKxqS5_SS41sUchUUfd6Sq4jiY6
