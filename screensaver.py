@@ -4,11 +4,13 @@ import json
 from tkinter import Tk, Label
 import googlemaps
 from datetime import datetime
+import time
 
 
 class App():
     def __init__(self):
         self.root = Tk()
+
         # decalre labels
         self.weatherLabel = Label(text="")
         self.busLabel = Label(text="")
@@ -18,9 +20,8 @@ class App():
         # packs
         self.weatherLabel.pack(expand=True)
         self.timeLabel.pack(expand=True)
-        self.busLabel.pack(expand=True)
         self.dateLabel.pack(expand=True)
-
+        self.busLabel.pack(expand=True)
 
         # root
         self.root.title("Live Screen")
@@ -34,15 +35,15 @@ class App():
 
         # bus config
         self.busLabel.configure(fg="white", background="black")
-        self.busLabel.configure(font=("Courier", 44))
+        self.busLabel.configure(font=("Courier", 50))
 
         # time config
         self.timeLabel.configure(fg="white", background="black")
-        self.timeLabel.configure(font=("Courier", 100))
+        self.timeLabel.configure(font=("Courier", 150))
 
         # date config
         self.dateLabel.configure(fg="white", background="black")
-        self.dateLabel.configure(font=("Courier", 44))
+        self.dateLabel.configure(font=("Courier", 60))
 
         self.update()
         self.time_update()
@@ -88,11 +89,11 @@ class App():
 
     # returns current time
     def get_current_time(self):
-        return datetime.now().strftime('%H:%M:%S\n')
+        return datetime.now().strftime("%I:%M %p")
 
     # returns current time
     def get_current_date(self):
-        return datetime.now().strftime('%Y-%m-%d')
+      return datetime.now().strftime('%Y-%m-%d')
 
 
     # Returns the next bus departure time as a string.
@@ -112,7 +113,7 @@ class App():
                                              departure_time=now)
 
         # Retrieve departure time and return string.
-        return "Next bus: " + directions_result[0]['legs'][0]['departure_time']['text']
+        return "Next bus to UBCO\n" + directions_result[0]['legs'][0]['departure_time']['text']
 
 
 app = App()
