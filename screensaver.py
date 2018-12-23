@@ -9,9 +9,12 @@ class App():
     def __init__(self):
         self.root = Tk()
         self.label = Label(text="")
-        self.label.pack()
-        self.root.title("Weather")
+        self.label.pack(expand=True)
+        self.root.title("Screensaver")
         self.root.geometry("700x300")
+        self.root.attributes("-fullscreen", True)
+        self.root.configure(background="black")
+        self.label.configure(fg="white", background="black")
         self.update_weather()
         self.root.mainloop()
 
