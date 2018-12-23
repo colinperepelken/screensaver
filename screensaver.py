@@ -15,6 +15,7 @@ class App():
         self.root.attributes("-fullscreen", True)
         self.root.configure(background="black")
         self.label.configure(fg="white", background="black")
+        self.label.configure(font=("Courier", 44))
         self.update_weather()
         self.root.mainloop()
 
@@ -62,4 +63,4 @@ class App():
 
       
 
-app=App()
+app = App()
