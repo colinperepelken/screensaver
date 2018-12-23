@@ -1,6 +1,6 @@
 import requests
 import json
-from tkinter import *
+from tk import *
 import googlemaps
 from datetime import datetime
 
