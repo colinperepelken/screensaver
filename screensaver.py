@@ -13,11 +13,14 @@ class App():
         self.weatherLabel = Label(text="")
         self.busLabel = Label(text="")
         self.timeLabel = Label(text="")
+        self.dateLabel = Label(text="")
 
         # packs
         self.weatherLabel.pack(expand=True)
-        self.busLabel.pack(expand=True)
         self.timeLabel.pack(expand=True)
+        self.busLabel.pack(expand=True)
+        self.dateLabel.pack(expand=True)
+
 
         # root
         self.root.title("Live Screen")
@@ -34,18 +37,31 @@ class App():
         self.busLabel.configure(font=("Courier", 44))
 
         # time config
-        self.timeLabel.configure(fg="white", backgorund="black")
-        self.timeLabel.configure(font=("Courier", 60))
+        self.timeLabel.configure(fg="white", background="black")
+        self.timeLabel.configure(font=("Courier", 100))
+
+        # date config
+        self.dateLabel.configure(fg="white", background="black")
+        self.dateLabel.configure(font=("Courier", 44))
 
         self.update()
+        self.time_update()
+        self.date_update()
         self.root.mainloop()
 
     # update function
     def update(self):
         self.weatherLabel.configure(text=self.get_weather())
-        self.timeLabel.configure(text=self.get_current_time())
         self.busLabel.configure(text=self.get_next_bus_departure_time())
         self.root.after(5000, self.update)
+
+    def time_update(self):
+        self.timeLabel.configure(text=self.get_current_time())
+        self.root.after(1000, self.time_update)
+
+    def date_update(self):
+            self.dateLabel.configure(text=self.get_current_date())
+            self.root.after(60000, self.time_update)
 
     # returns weather
     def get_weather(self):
@@ -70,10 +86,14 @@ class App():
         text = weather_text + low_temp_text + high_temp_text
         return text
 
-        # returns current time
-
+    # returns current time
     def get_current_time(self):
-        return "Current Time: " + datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        return datetime.now().strftime('%H:%M:%S\n')
+
+    # returns current time
+    def get_current_date(self):
+        return datetime.now().strftime('%Y-%m-%d')
+
 
     # Returns the next bus departure time as a string.
     # From the Artium Student Residence to UBCO.
