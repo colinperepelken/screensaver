@@ -1,6 +1,6 @@
 import requests
 import json
-from tkinter import *
+from tkinter import Tk, Label
 import googlemaps
 from datetime import datetime
 
@@ -17,7 +17,7 @@ class App():
 
     def update_weather(self):
         self.get_weather()
-        self.root.after(1000, self.update_weather)
+        self.root.after(5000, self.update_weather)
 
     def get_weather(self):
       print("Updating weather")
@@ -27,10 +27,14 @@ class App():
 
       res_json = json.loads(response.content.decode('utf-8'))
 
-      weather = "Weather: " + res_json["weather"][0]["main"] + "\n"
-      low_temp = "Low: " + str(res_json["main"]["temp_min"] - 273.15)  + "\n"
-      high_temp = "High: " + str(res_json["main"]["temp_max"] - 273.15)
-      text = weather + low_temp + high_temp
+      current_temp = int(round(res_json["main"]["temp"] - 273.15, 0))
+      current_weather = res_json["weather"][0]["main"]
+      low_temp = int(res_json["main"]["temp_min"] - 273.15)
+      high_temp = int(res_json["main"]["temp_max"] - 273.15)
+      weather_text = "Weather: " + current_weather + ", " + str(current_temp) + " °C\n"
+      low_temp_text = "Low: " + str(low_temp) + " °C\n"
+      high_temp_text = "High: " + str(high_temp) + " °C"
+      text = weather_text + low_temp_text + high_temp_text
       self.label.configure(text=text + "\nNext bus: " + self.get_next_bus_departure_time())
 
     #
