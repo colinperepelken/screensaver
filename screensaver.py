@@ -8,11 +8,15 @@ from PIL import Image, ImageTk
 
 class App():
     def __init__(self):
+        # Initialize Google Maps API.
+        self.gmaps = googlemaps.Client(key='AIzaSyCZ_3BKxqS5_SS41sUchUUfd6Sq4jiY6-A')
+        # use a session for requests
+        self.session = requests.Session()
         self.root = Tk()
 
         self.weatherFrame = Frame(self.root, bg="black")
 
-        # decalre labels
+        # init labels
         self.weatherLabel = Label(self.weatherFrame, text="")
         self.weatherIcon = Label(self.weatherFrame, borderwidth=0)
 
@@ -20,7 +24,7 @@ class App():
         self.timeLabel = Label(text="")
         self.dateLabel = Label(text="")
 
-        # packs
+        # set layouts
         self.weatherFrame.pack(side=TOP, pady=50)
         self.weatherLabel.pack(side=LEFT, fill=NONE)
         self.weatherIcon.pack(side=LEFT, fill=NONE)
@@ -28,7 +32,7 @@ class App():
         self.dateLabel.pack(expand=True)
         self.busLabel.pack(pady=50)
 
-# root
+        # set window attributees
         self.root.title("Live Screen")
         self.root.geometry("700x300")
         self.root.attributes("-fullscreen", True)
@@ -78,7 +82,7 @@ class App():
         api_key = "f5988e28703d9fdcb99201c66e8eabcf"
         city = "Kelowna"
 
-        response = requests.get("http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + api_key)
+        response = self.session.get("http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + api_key)
         res_json = json.loads(response.content.decode('utf-8'))
 
         current_temp = int(round(res_json["main"]["temp"] - 273.15, 0))
@@ -125,12 +129,11 @@ class App():
     #
     def get_next_bus_departure_time(self):
 
-        # Initialize Google Maps API.
-        gmaps = googlemaps.Client(key='AIzaSyCZ_3BKxqS5_SS41sUchUUfd6Sq4jiY6-A')
+        
 
         # Request directions via public transit.
         now = datetime.now()
-        directions_result = gmaps.directions("The Artium Student Residence, Kelowna",
+        directions_result = self.gmaps.directions("The Artium Student Residence, Kelowna",
                                              "UBC Okanagan, Kelowna, BC",
                                              mode="transit",
                                              departure_time=now)
