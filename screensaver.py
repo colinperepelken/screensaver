@@ -10,7 +10,7 @@ class App():
     def __init__(self):
 
         # Initialize global config file.
-        config = yaml.safe_load(open("config.yml"))
+        self.config = yaml.safe_load(open("config.yml"))
 
         # Initialize Google Maps API.
         self.gmaps = googlemaps.Client(key=config['google_maps_api_key'])
@@ -82,8 +82,8 @@ class App():
 
     # returns weather
     def get_weather(self):
-        api_key = "f5988e28703d9fdcb99201c66e8eabcf"
-        city = "Kelowna"
+        api_key = self.config['google_maps_api_key']
+        city = self.config['city']
 
         response = self.session.get("http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + api_key)
         res_json = json.loads(response.content.decode('utf-8'))

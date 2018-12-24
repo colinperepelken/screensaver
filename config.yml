@@ -1,0 +1,15 @@
+# Raspberry PI Screensaver
+# Custom Configuration File
+# Edit below settings to customize your screensaver.
+
+# Settings for bus departure time label.
+transit_settings:
+  home_location: The Artium Student Residence, Kelowna, BC
+  destination_location: UBC Okanagan, Kelowna, BC
+
+# Settings for weather display.
+weather_settings:
+  city: Kelowna
+
+# General settings.
+google_maps_api_key: AIzaSyCZ_3BKxqS5_SS41sUchUUfd6Sq4jiY6-A
