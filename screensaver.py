@@ -6,6 +6,8 @@ import googlemaps
 from datetime import datetime
 from PIL import Image, ImageTk
 import yaml
+from unsplash.api import Api
+from unsplash.auth import Auth
 
 class App():
     def __init__(self):
@@ -18,6 +20,14 @@ class App():
         # use a session for requests
         self.session = requests.Session()
         self.root = Tk()
+
+        # Initiialize Unsplash API
+        clientId = ""
+        clientSecret = ""
+        redirectUri = ""
+        code = ""
+        unsplashAuth = Auth(clientId, clientSecret, redirectUri, code=code)
+        unsplashApi = Api(unplashAuth)
 
         self.weatherFrame = Frame(self.root, bg="black")
 

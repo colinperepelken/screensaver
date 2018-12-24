@@ -12,5 +12,12 @@ weather_settings:
   city: Kelowna
   openweather_api_key: f5988e28703d9fdcb99201c66e8eabcf
 
+# Unsplash settings.
+unplash_settings:
+   client_id: temp
+   client_secret: temp
+   redirect_uri: temp
+   code: temp
+
 # General settings.
 google_maps_api_key: AIzaSyCZ_3BKxqS5_SS41sUchUUfd6Sq4jiY6-A
