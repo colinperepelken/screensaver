@@ -5,6 +5,7 @@ from tkinter import *
 import googlemaps
 from datetime import datetime
 from PIL import Image, ImageTk
+import yaml
 
 class App():
     def __init__(self):
@@ -78,6 +79,7 @@ class App():
 
     # returns weather
     def get_weather(self):
+        global config
         print("Updating weather")
         api_key = "f5988e28703d9fdcb99201c66e8eabcf"
         city = "Kelowna"
@@ -128,8 +130,8 @@ class App():
     # Next bus time relies on current time.
     #
     def get_next_bus_departure_time(self):
-
-        
+        global config
+        print("Updating bus departure time")
 
         # Request directions via public transit.
         now = datetime.now()
