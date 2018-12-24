@@ -10,6 +10,7 @@ transit_settings:
 # Settings for weather display.
 weather_settings:
   city: Kelowna
+  openweather_api_key: f5988e28703d9fdcb99201c66e8eabcf
 
 # General settings.
 google_maps_api_key: AIzaSyCZ_3BKxqS5_SS41sUchUUfd6Sq4jiY6-A

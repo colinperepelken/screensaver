@@ -5,6 +5,7 @@ from tkinter import *
 import googlemaps
 from datetime import datetime
 from PIL import Image, ImageTk
+import yaml
 
 class App():
     def __init__(self):
@@ -13,7 +14,7 @@ class App():
         self.config = yaml.safe_load(open("config.yml"))
 
         # Initialize Google Maps API.
-        self.gmaps = googlemaps.Client(key=config['google_maps_api_key'])
+        self.gmaps = googlemaps.Client(key=self.config['google_maps_api_key'])
         # use a session for requests
         self.session = requests.Session()
         self.root = Tk()
@@ -68,8 +69,11 @@ class App():
         try:
           self.weatherLabel.configure(text=self.get_weather())
         except Exception as e:
-          print("Exception occured while getting weather: " + e)
-        self.busLabel.configure(text=self.get_next_bus_departure_time())
+          print("Exception occured while getting weather: " + str(e))
+        try:
+          self.busLabel.configure(text=self.get_next_bus_departure_time())
+        except Exception as e:
+          print("Exception occured while getting next bus departure time: " + str(e))
         self.root.after(5000, self.update)
 
     def time_update(self):
@@ -82,8 +86,8 @@ class App():
 
     # returns weather
     def get_weather(self):
-        api_key = self.config['google_maps_api_key']
-        city = self.config['city']
+        api_key = self.config['weather_settings']['openweather_api_key']
+        city = self.config['weather_settings']['city']
 
         response = self.session.get("http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + api_key)
         res_json = json.loads(response.content.decode('utf-8'))
@@ -132,12 +136,12 @@ class App():
     def get_next_bus_departure_time(self):
         # Request directions via public transit.
         now = datetime.now()
-        directions_result = self.gmaps.directions("The Artium Student Residence, Kelowna",
-                                             "UBC Okanagan, Kelowna, BC",
-                                             mode="transit",
-                                             departure_time=now)
+        directions_result = self.gmaps.directions(self.config['transit_settings']['home_location'],
+                                                  self.config['transit_settings']['destination_location'],
+                                                  mode="transit",
+                                                  departure_time=now)
 
         # Retrieve departure time and return string.
-        return "Next bus to UBCO\n" + directions_result[0]['legs'][0]['departure_time']['text']
+        return "Next bus\n" + directions_result[0]['legs'][0]['departure_time']['text']
 
 app = App()
