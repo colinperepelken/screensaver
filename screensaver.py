@@ -8,8 +8,12 @@ from PIL import Image, ImageTk
 
 class App():
     def __init__(self):
+
+        # Initialize global config file.
+        config = yaml.safe_load(open("config.yml"))
+
         # Initialize Google Maps API.
-        self.gmaps = googlemaps.Client(key='AIzaSyCZ_3BKxqS5_SS41sUchUUfd6Sq4jiY6-A')
+        self.gmaps = googlemaps.Client(key=config['google_maps_api_key'])
         # use a session for requests
         self.session = requests.Session()
         self.root = Tk()
@@ -78,7 +82,6 @@ class App():
 
     # returns weather
     def get_weather(self):
-        print("Updating weather")
         api_key = "f5988e28703d9fdcb99201c66e8eabcf"
         city = "Kelowna"
 
@@ -87,7 +90,7 @@ class App():
 
         current_temp = int(round(res_json["main"]["temp"] - 273.15, 0))
         current_weather = res_json["weather"][0]["main"]
-        
+
 
         image = Image.open(self.get_weather_icon(current_weather))
         image = image.resize((100, 100), Image.ANTIALIAS)
@@ -110,7 +113,7 @@ class App():
           "Clouds": "images/cloudy.png",
           "Snow": "images/snow.png",
           "Rain": "images/rain.png"
-        }   
+        }
 
         return icon_map[weather]
 
@@ -126,11 +129,7 @@ class App():
     # Returns the next bus departure time as a string.
     # From the Artium Student Residence to UBCO.
     # Next bus time relies on current time.
-    #
     def get_next_bus_departure_time(self):
-
-        
-
         # Request directions via public transit.
         now = datetime.now()
         directions_result = self.gmaps.directions("The Artium Student Residence, Kelowna",
