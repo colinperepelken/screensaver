@@ -17,29 +17,39 @@ class App():
 
         # Initialize Google Maps API.
         self.gmaps = googlemaps.Client(key=self.config['google_maps_api_key'])
-        # use a session for requests
+
+        # Init Unsplash.
+        auth = Auth(self.config['unsplash_settings']['client_id'],
+                    self.config['unsplash_settings']['client_secret'],
+                    self.config['unsplash_settings']['redirect_uri'],
+                    code="")
+        api = Api(auth)
+
+        # Use a session for requests.
         self.session = requests.Session()
         self.root = Tk()
 
-        # Initiialize Unsplash API
-        clientId = ""
-        clientSecret = ""
-        redirectUri = ""
-        code = ""
-        unsplashAuth = Auth(clientId, clientSecret, redirectUri, code=code)
-        unsplashApi = Api(unplashAuth)
+        # Initialize background image.
+        randomImage = api.photo.random(orientation="landscape", featured=True)
+        self.backgroundImage = PhotoImage(randomImage)
+        print(type(self.backgroundImage))
+        self.backgroundLabel = Label(image=self.backgroundImage)
+        self.backgroundLabel.image = self.backgroundImage # to prevent garbage colletion from destroying image.
+        self.backgroundLabel.place(x=0, y=0, relwidth=1, relheight=1)
+
 
         self.weatherFrame = Frame(self.root, bg="black")
 
-        # init labels
+        # Init labels.
         self.weatherLabel = Label(self.weatherFrame, text="")
         self.weatherIcon = Label(self.weatherFrame, borderwidth=0)
 
         self.busLabel = Label(text="")
         self.timeLabel = Label(text="")
         self.dateLabel = Label(text="")
+        self.backgroundImage = Label(text="")
 
-        # set layouts
+        # Set layouts.
         self.weatherFrame.pack(side=TOP, pady=50)
         self.weatherLabel.pack(side=LEFT, fill=NONE)
         self.weatherIcon.pack(side=LEFT, fill=NONE)
@@ -47,7 +57,7 @@ class App():
         self.dateLabel.pack(expand=True)
         self.busLabel.pack(pady=50)
 
-        # set window attributees
+        # Set window attributees.
         self.root.title("Live Screen")
         self.root.geometry("700x300")
         self.root.attributes("-fullscreen", True)
@@ -81,7 +91,8 @@ class App():
         except Exception as e:
           print("Exception occured while getting weather: " + str(e))
         try:
-          self.busLabel.configure(text=self.get_next_bus_departure_time())
+            print("skipping bus...")
+          # self.busLabel.configure(text=self.get_next_bus_departure_time())
         except Exception as e:
           print("Exception occured while getting next bus departure time: " + str(e))
         self.root.after(5000, self.update)
@@ -96,6 +107,7 @@ class App():
 
     # returns weather
     def get_weather(self):
+        print("Updating weather...")
         api_key = self.config['weather_settings']['openweather_api_key']
         city = self.config['weather_settings']['city']
 
@@ -144,6 +156,7 @@ class App():
     # From the Artium Student Residence to UBCO.
     # Next bus time relies on current time.
     def get_next_bus_departure_time(self):
+        print("Updating bus departure time...")
         # Request directions via public transit.
         now = datetime.now()
         directions_result = self.gmaps.directions(self.config['transit_settings']['home_location'],

@@ -13,11 +13,11 @@ weather_settings:
   openweather_api_key: f5988e28703d9fdcb99201c66e8eabcf
 
 # Unsplash settings.
-unplash_settings:
-   client_id: temp
-   client_secret: temp
-   redirect_uri: temp
-   code: temp
+unsplash_settings:
+   client_id: 60ae2a926f3a46927f67056a94d6ea58b8fb077adb47b48efbbeac593426c5d2
+   client_secret: 9c156f56cad21e3ce391c1ded5fcc038248e837f9908729e257765cc3005e1a7
+   redirect_uri: urn:ietf:wg:oauth:2.0:oob
+
 
 # General settings.
 google_maps_api_key: AIzaSyCZ_3BKxqS5_SS41sUchUUfd6Sq4jiY6-A
