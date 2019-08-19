@@ -15,6 +15,8 @@ import googlemaps
 from datetime import datetime
 from PIL import Image, ImageTk
 import yaml
+import navitia_wrapper
+
 
 class App():
     def __init__(self):
@@ -171,6 +173,15 @@ class App():
                      + '&routeNo=' + self.config['bus_settings']['route_num']
 
             new_bus = 'https://gtfs.translink.ca/v2/gtfsalerts?apikey=' + self.config['bus_settings']['translink_api']
+
+            nav_bus = 'https://api.navitia.io/v1/coverage/ca-bc/routes/route%3AKLW%3A97-Kelowna_R/vehicle_journeys?from_datetime=20190819T060000&items_per_schedule=100&'
+            url = "http://api.navitia.io/"
+            api_key = "g28dc2772-0abf-463a-a5f8-20c06bc892a7"
+            coverage = "ca-bc"
+
+            nav = navitia_wrapper.Navitia(url=url, token=api_key).instance(coverage)
+
+            print(nav.stop_areas("stop_area:OIF:SA:8768600")[0]['label'])
             print(new_bus)
         except Exception as e:
             print("Exception: " + str(e))
