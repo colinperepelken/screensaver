@@ -78,11 +78,11 @@ class App():
         try:
           self.weatherLabel.configure(text=self.get_weather())
         except Exception as e:
-          print("Exception occured while getting weather: " + str(e))
-        try:
-          self.busLabel.configure(text=self.get_next_bus_departure_time())
-        except Exception as e:
-          print("Exception occured while getting next bus departure time: " + str(e))
+          print("Exception occurred while getting weather: " + str(e))
+        # try:
+        #   self.busLabel.configure(text=self.get_next_bus_departure_time())
+        # except Exception as e:
+        #   print("Exception occured while getting next bus departure time: " + str(e))
         self.root.after(5000, self.update)
 
     def time_update(self):
@@ -96,7 +96,9 @@ class App():
     # returns weather
     def get_weather(self):
         api_key = self.config['weather_settings']['openweather_api_key']
+        parsa_api = 'cb52bfd59abded6aec05d3a17a7dc0c8'
         city = self.config['weather_settings']['city']
+
 
         response = self.session.get("http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + api_key)
         res_json = json.loads(response.content.decode('utf-8'))
@@ -123,6 +125,7 @@ class App():
 
     def get_weather_icon(self, weather):
         icon_map = {
+          "Clear": "images/clear_sky.png",
           "Clouds": "images/cloudy.png",
           "Snow": "images/snow.png",
           "Rain": "images/rain.png"
@@ -136,7 +139,7 @@ class App():
 
     # returns current time
     def get_current_date(self):
-      return datetime.now().strftime('%Y-%m-%d')
+      return datetime.now().strftime('%B %d %Y')
 
 
     # Returns the next bus departure time as a string.
