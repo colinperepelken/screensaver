@@ -1,3 +1,12 @@
+
+# importing
+#you need to install the following to run this file:
+# requests
+# tkinter
+# googlemaps
+# images
+# PYYAML
+
 # importing
 import requests
 import json
