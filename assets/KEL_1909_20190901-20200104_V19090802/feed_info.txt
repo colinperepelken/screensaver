@@ -1,0 +1,2 @@
+feed_publisher_name,feed_publisher_url,feed_lang,feed_start_date,feed_end_date,feed_version
+BC Transit,http://www.bctransit.com,en,20190901,20200104,GTFS_KEL1909_20190901-20200104_v20190802

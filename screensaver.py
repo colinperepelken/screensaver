@@ -79,6 +79,10 @@ class App():
           self.weatherLabel.configure(text=self.get_weather())
         except Exception as e:
           print("Exception occurred while getting weather: " + str(e))
+        try:
+            self.next_bus()
+        except Exception as e:
+            print("Exception occurred while getting bus: " +str(e))
         # try:
         #   self.busLabel.configure(text=self.get_next_bus_departure_time())
         # except Exception as e:
@@ -155,5 +159,24 @@ class App():
 
         # Retrieve departure time and return string.
         return "Next bus\n" + directions_result[0]['legs'][0]['departure_time']['text']
+    def next_bus(self):
+        try:
+
+            # Returns the next 3 buses to service the stop in the next 2 hours for route 50
+            my_bus = 'https://api.translink.ca/rttiapi/v1/stops/' \
+                     + self.config['bus_settings']['stop_id'] \
+                     + '/estimates?apikey=' + self.config['bus_settings']['translink_api'] \
+                     + '&count=' + self.config['bus_settings']['bus_count'] \
+                     + '&timeframe=' + self.config['bus_settings']['time_count'] \
+                     + '&routeNo=' + self.config['bus_settings']['route_num']
+
+            new_bus = 'https://gtfs.translink.ca/v2/gtfsalerts?apikey=' + self.config['bus_settings']['translink_api']
+            print(new_bus)
+        except Exception as e:
+            print("Exception: " + str(e))
+
+
+
+
 
 app = App()

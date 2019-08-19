@@ -1,0 +1,5 @@
+service_id,monday,tuesday,wednesday,thursday,friday,saturday,sunday,start_date,end_date
+KEL1909-KEL1909-Sunday-07,0,0,0,0,0,0,1,20190901,20191229
+KEL1909-KEL1909-Weekday-15,1,1,1,1,1,0,0,20190902,20200103
+KEL1909-KEL1909-Weekday-15-0000100,0,0,0,0,1,0,0,20190902,20200103
+KEL1909-KEL1909-Saturday-14,0,0,0,0,0,1,0,20190907,20200104
