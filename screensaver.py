@@ -16,6 +16,8 @@ from datetime import datetime
 from PIL import Image, ImageTk
 import yaml
 import navitia_wrapper
+import json
+
 
 
 class App():
@@ -174,15 +176,33 @@ class App():
 
             new_bus = 'https://gtfs.translink.ca/v2/gtfsalerts?apikey=' + self.config['bus_settings']['translink_api']
 
-            nav_bus = 'https://api.navitia.io/v1/coverage/ca-bc/routes/route%3AKLW%3A97-Kelowna_R/vehicle_journeys?from_datetime=20190819T060000&items_per_schedule=100&'
-            url = "http://api.navitia.io/"
             api_key = "g28dc2772-0abf-463a-a5f8-20c06bc892a7"
-            coverage = "ca-bc"
+            nav_bus = 'https://api.navitia.io/v1/coverage/ca-bc/routes/route%3AKLW%3A97-Kelowna_R/vehicle_journeys?from_datetime=20190819T060000&items_per_schedule=100&'
+            url = "https://api.navitia.io/v1/coverage"
 
+            coverage = "ca-bc"
             nav = navitia_wrapper.Navitia(url=url, token=api_key).instance(coverage)
 
-            print(nav.stop_areas("stop_area:OIF:SA:8768600")[0]['label'])
-            print(new_bus)
+            response = self.session.get(nav_bus,
+                                    auth=('785cb1b9-00e1-47b4-8271-213a4b720888', ''))
+            response_json = json.loads(response.text)
+
+            res_json = json.loads(response.content.decode('utf-8'))
+
+            # Get the file name for the new file to write
+
+            # Writing JSON data
+            #with open('my_json_file.json', 'w') as f:
+            #    json.dump(res_json, f)
+
+            #with open('data.json', 'w') as f:
+            #    json.dump(response, f, ensure_ascii=False, indent=4)
+           # print(res_json)
+            print(res_json["vehicle_journeys"][0]["stop_times"][1]["departure_time"])
+
+
+            #print(nav.stop_areas("stop_area:OIF:SA:8768600")[0]['label'])
+            #print(response)
         except Exception as e:
             print("Exception: " + str(e))
 
