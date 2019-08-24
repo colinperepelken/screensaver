@@ -134,6 +134,7 @@ class App():
     def get_weather_icon(self, weather):
         icon_map = {
           "Clear": "images/clear_sky.png",
+          "Haze": "images/clear_sky.png",
           "Clouds": "images/cloudy.png",
           "Snow": "images/snow.png",
           "Rain": "images/rain.png"
@@ -165,75 +166,33 @@ class App():
 
         return print(best_bus)
 
-    # Returns element closest to target in arr[]
-    def findClosest(self, arr, n, target):
+    def findClosest(self, list, find):
+        found = -1
+        for idx in range(len(list)):
+            if list[idx] > find:  # < for opposite case.
+                if found == -1:
+                    found = idx
+                else:
+                    if list[idx] < list[found]:  # > for opposite case.
+                        found = idx
 
-        # Corner cases
-        if (target <= arr[0]):
-            return arr[0]
-        if (target >= arr[n - 1]):
-            return arr[n - 1]
-
-            # Doing binary search
-        i = 0;
-        j = n;
-        mid = 0
-        while (i < j):
-            mid = (i + j) / 2
-
-            if (arr[mid] == target):
-                return arr[mid]
-
-                # If target is less than array
-            # element, then search in left
-            if (target < arr[mid]):
-
-                # If target is greater than previous
-                # to mid, return closest of two
-                if (mid > 0 and target > arr[mid - 1]):
-                    if(target - arr[mid-1] >= arr[mid] - target):
-                        return arr[mid]
-                    else:
-                        return arr[mid-1]
-
-                    # Repeat for left half
-                j = mid
-
-                # If target is greater than mid
-            else:
-                if (mid < n - 1 and target < arr[mid + 1]):
-                    if (target - arr[mid] >= arr[mid+1] - target):
-                        return arr[mid+1]
-                    else:
-                        return arr[mid]
-
-
-                    # update i
-                i = mid + 1
-
-        # Only single element left after search
-        return arr[mid]
-
+        # <- Note indent level, this is OUTSIDE the for loop.
+        if found == -1:
+            return -99999
+        return list[found]
 
 
     def weekday_bus(self, today_hour, today_hour_min,pm_or_am):
-        UBCO_am = [608, 638, 653, 707, 722, 737, 752, 807, 822, 837, 907, 937,
-                      1007, 1036, 1106, 1136]
-        UBCO_pm = [1205, 1235, 105, 135, 149, 204, 219, 239, 254, 309, 324, 339,
-                         354, 409, 424, 439, 509, 525, 542, 558, 613, 625, 643, 713,
-                         744, 814, 914, 944, 1014, 1044, 1114, 1146, 1216]
+        UBCO_am = [608, 638, 653, 707, 722, 737, 752, 807, 822, 837, 907, 937, 1007, 1036, 1106, 1136, 1205, 1235]
+        UBCO_pm = [105, 135, 149, 204, 219, 239, 254, 309, 324, 339, 354, 409, 424, 439, 509, 525, 542, 558, 613, 625,
+                   643, 713, 744, 814, 914, 944, 1014, 1044, 1114, 1146, 1216]
 
-        am_length = len(UBCO_am)
-        pm_length = len(UBCO_pm)
+        best_time_pm = self.findClosest(UBCO_pm, today_hour_min);
+        best_time_am = self.findClosest(UBCO_am, today_hour_min);
 
-        #best_time = self.findClosest(UBCO_pm, pm_length, today_hour_min);
-        best_time = self.findClosest(UBCO_pm, pm_length, today_hour_min);
-        arr = [1, 2, 4, 5, 6, 6, 8, 9]
-        n = len(arr)
-        target = 11
-        #best_time = self.findClosest(arr, n, target)
-        return best_time
-        #print(best_time)
+        best_time_test = self.findClosest(UBCO_am, 952);
+
+        return best_time_test
 
 
 # Returns the next bus departure time as a string.
