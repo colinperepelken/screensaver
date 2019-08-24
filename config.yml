@@ -14,3 +14,21 @@ weather_settings:
 
 # General settings.
 google_maps_api_key: AIzaSyCZ_3BKxqS5_SS41sUchUUfd6Sq4jiY6-A
+
+bus_settings:
+  # api key
+  translink_api: D4FI6Xtu0cQTC2evkG5q
+
+  # Harvey at Kirschner - Parkinson Station stop ID
+  #stop_id: '102989'
+  stop_id: '60980'
+
+  # route # (3 digits)
+  route_num: '50'
+
+  # bus count - used for determining the next __ buses to x
+  bus_count: '3'
+
+  # time - in minutes - used for determining buses in the __ minutes
+  # 2 hours
+  time_count: '120'
