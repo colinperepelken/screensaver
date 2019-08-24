@@ -61,7 +61,7 @@ class App():
         self.weatherLabel.configure(font=("Courier", 44))
 
         # bus config
-        self.busLabel.configure(fg="white", background="black")
+        self.busLabel.configure(fg="azure", background="black")
         self.busLabel.configure(font=("Courier", 100))
 
         # time config
@@ -105,7 +105,9 @@ class App():
     def bus_update(self):
         self.busLabel.configure(text=self.get_next_bus())
         # every 5 minutes = 300000 ms
-        self.root.after(300000, self.time_update)
+        self.root.after(1000, self.time_update)
+
+
 
     # returns weather
     def get_weather(self):
@@ -156,6 +158,12 @@ class App():
     def get_current_date(self):
       return datetime.now().strftime('%A, %B %d')
 
+    def eta(self, best_bus, today_hour_min):
+        eta = best_bus - today_hour_min
+        return eta
+
+
+
     def get_next_bus(self):
 
         now = datetime.now()
@@ -163,6 +171,7 @@ class App():
         today_day = now.strftime("%A")
         # returns the current hour without leading 0
         today_hour = now.strftime("%-I")
+
         # returns current hour and time without leading 0 in 12 hour system, format: 830 for 8:30
         today_hour_min = now.strftime("%-I%M")
         # returns PM or AM
@@ -171,6 +180,39 @@ class App():
         best_bus = self.weekday_bus(int(today_hour), int(today_hour_min), pm_or_am)
         best_bus_str = str(best_bus)
         best_bus_len = len(best_bus_str)
+
+        eta_next_bus = self.eta(int(best_bus), int(today_hour_min))
+        if eta_next_bus >= 50:
+            eta_next_bus = eta_next_bus - 40
+        eta_next_bus_str = str(eta_next_bus)
+
+        if eta_next_bus == 20:
+            self.busLabel.configure(fg="yellow")
+        elif eta_next_bus == 15:
+            self.busLabel.configure(fg="orange")
+        elif eta_next_bus == 14:
+            self.busLabel.configure(fg="orange2")
+        elif eta_next_bus == 13:
+            self.busLabel.configure(fg="orange3")
+        elif eta_next_bus == 12:
+            self.busLabel.configure(fg="dark orange")
+        elif eta_next_bus == 11:
+            self.busLabel.configure(fg="DarkOrange1")
+        elif eta_next_bus == 10:
+            self.busLabel.configure(fg="DarkOrange2")
+        elif eta_next_bus == 5:
+            self.busLabel.configure(fg="orange red")
+        elif eta_next_bus == 4:
+            self.busLabel.configure(fg="OrangeRed2")
+        elif eta_next_bus == 3:
+            self.busLabel.configure(fg="OrangeRed3")
+        elif eta_next_bus == 2:
+            self.busLabel.configure(fg="red")
+        elif eta_next_bus == 1:
+            self.busLabel.configure(fg="red2")
+        else:
+            self.busLabel.configure(fg="azure")
+
 
         if best_bus_len == 4:
             first_two_dig = best_bus_str[:2]
@@ -183,7 +225,8 @@ class App():
         else:
             best_bus_nice_format = best_bus
 
-        return best_bus_nice_format
+
+        return eta_next_bus_str + ' mins till \nbus @ ' + best_bus_nice_format
 
     def findClosest(self, list, find):
         found = -1
@@ -200,57 +243,89 @@ class App():
             return -99999
         return list[found]
 
+    def findSecondClosest(self, list, find):
+        found = -1
+        for idx in range(len(list)):
+            if list[idx] > find:  # < for opposite case.
+                if found == -1:
+                    found = idx
+                else:
+                    if list[idx] < list[found]:  # > for opposite case.
+                        found = idx
+
+        # <- Note indent level, this is OUTSIDE the for loop.
+        if found == -1:
+            return -99999
+        return list[found+1]
+
 
     def weekday_bus(self, today_hour, today_hour_min,pm_or_am):
         UBCO_am = [608, 638, 653, 707, 722, 737, 752, 807, 822, 837, 907, 937, 1007, 1036, 1106, 1136, 1205, 1235]
         UBCO_pm = [105, 135, 149, 204, 219, 239, 254, 309, 324, 339, 354, 409, 424, 439, 509, 525, 542, 558, 613, 625,
                    643, 713, 744, 814, 914, 944, 1014, 1044, 1114, 1146, 1216]
 
-        best_time_pm = self.findClosest(UBCO_pm, today_hour_min);
-        best_time_am = self.findClosest(UBCO_am, today_hour_min);
+        if pm_or_am == 'AM':
+            best_time = self.findClosest(UBCO_am, today_hour_min);
+        elif pm_or_am == 'PM':
+            best_time = self.findClosest(UBCO_pm, today_hour_min);
+        else:
+            best_time = 'error'
 
-        best_time_test = self.findClosest(UBCO_am, 900);
+        best_time_test = self.findSecondClosest(UBCO_am, 600);
 
-        return best_time_test
+        return best_time
 
+    # def weekday_bus_second(self, today_hour, today_hour_min, pm_or_am):
+    #     UBCO_am = [608, 638, 653, 707, 722, 737, 752, 807, 822, 837, 907, 937, 1007, 1036, 1106, 1136, 1205, 1235]
+    #     UBCO_pm = [105, 135, 149, 204, 219, 239, 254, 309, 324, 339, 354, 409, 424, 439, 509, 525, 542, 558, 613, 625,
+    #                643, 713, 744, 814, 914, 944, 1014, 1044, 1114, 1146, 1216]
+    #
+    #     if pm_or_am == 'AM':
+    #         best_time = self.findSecondClosest(UBCO_am, today_hour_min);
+    #     elif pm_or_am == 'PM':
+    #         best_time = self.findSecondClosest(UBCO_pm, today_hour_min);
+    #     else:
+    #         best_time = 'error'
+    #
+    #     return best_time
 
-# Returns the next bus departure time as a string.
-# From the Artium Student Residence to UBCO.
-# Next bus time relies on current time.
-# def get_next_bus_departure_time(self):
-#     # Request directions via public transit.
-#     now = datetime.now()
-#   #OLD WAY OF DOING IT VIA GOOGLE MAPS:
-#     directions_result = self.gmaps.directions(self.config['transit_settings']['home_location'],
-#                                               self.config['transit_settings']['destination_location'],
-#                                               mode="transit",
-#                                               departure_time=now)
-#
-#     # Retrieve departure time and return string.
-#      return "Next bus\n" + directions_result[0]['legs'][0]['departure_time']['text']
-#
-#     # Works with Vancouver's translink: as of Aug 19 2019
-#     new_bus = 'https://gtfs.translink.ca/v2/gtfsalerts?apikey=' + self.config['bus_settings']['translink_api']
-# def next_bus(self):
-#     try:
-#         api_key = "g28dc2772-0abf-463a-a5f8-20c06bc892a7"
-#         nav_bus = 'https://api.navitia.io/v1/coverage/ca-bc/routes/route%3AKLW%3A97-Kelowna_R/vehicle_journeys?from_datetime=20190819T060000&items_per_schedule=100&'
-#         url = "https://api.navitia.io/v1/coverage"
-#
-#         coverage = "ca-bc"
-#         nav = navitia_wrapper.Navitia(url=url, token=api_key).instance(coverage)
-#
-#         response = self.session.get(nav_bus,
-#                                 auth=('785cb1b9-00e1-47b4-8271-213a4b720888', ''))
-#         response_json = json.loads(response.text)
-#
-#         res_json = json.loads(response.content.decode('utf-8'))
-#
-#         print(res_json["vehicle_journeys"][0]["stop_times"][0]["stop_point"]["name"],
-#               res_json["vehicle_journeys"][0]["stop_times"][0]["departure_time"])
-#
-#     except Exception as e:
-#         print("Exception: " + str(e))
+    # Returns the next bus departure time as a string.
+    # From the Artium Student Residence to UBCO.
+    # Next bus time relies on current time.
+    # def get_next_bus_departure_time(self):
+    #     # Request directions via public transit.
+    #     now = datetime.now()
+    #   #OLD WAY OF DOING IT VIA GOOGLE MAPS:
+    #     directions_result = self.gmaps.directions(self.config['transit_settings']['home_location'],
+    #                                               self.config['transit_settings']['destination_location'],
+    #                                               mode="transit",
+    #                                               departure_time=now)
+    #
+    #     # Retrieve departure time and return string.
+    #      return "Next bus\n" + directions_result[0]['legs'][0]['departure_time']['text']
+    #
+    #     # Works with Vancouver's translink: as of Aug 19 2019
+    #     new_bus = 'https://gtfs.translink.ca/v2/gtfsalerts?apikey=' + self.config['bus_settings']['translink_api']
+    # def next_bus(self):
+    #     try:
+    #         api_key = "g28dc2772-0abf-463a-a5f8-20c06bc892a7"
+    #         nav_bus = 'https://api.navitia.io/v1/coverage/ca-bc/routes/route%3AKLW%3A97-Kelowna_R/vehicle_journeys?from_datetime=20190819T060000&items_per_schedule=100&'
+    #         url = "https://api.navitia.io/v1/coverage"
+    #
+    #         coverage = "ca-bc"
+    #         nav = navitia_wrapper.Navitia(url=url, token=api_key).instance(coverage)
+    #
+    #         response = self.session.get(nav_bus,
+    #                                 auth=('785cb1b9-00e1-47b4-8271-213a4b720888', ''))
+    #         response_json = json.loads(response.text)
+    #
+    #         res_json = json.loads(response.content.decode('utf-8'))
+    #
+    #         print(res_json["vehicle_journeys"][0]["stop_times"][0]["stop_point"]["name"],
+    #               res_json["vehicle_journeys"][0]["stop_times"][0]["departure_time"])
+    #
+    #     except Exception as e:
+    #         print("Exception: " + str(e))
 
 
 
