@@ -27,7 +27,7 @@ class App():
         self.config = yaml.safe_load(open("config.yml"))
 
         # Initialize Google Maps API.
-        self.gmaps = googlemaps.Client(key=self.config['google_maps_api_key'])
+        # self.gmaps = googlemaps.Client(key=self.config['google_maps_api_key'])
         # use a session for requests
         self.session = requests.Session()
         self.root = Tk()
@@ -47,8 +47,8 @@ class App():
         self.weatherLabel.pack(side=LEFT, fill=NONE)
         self.weatherIcon.pack(side=LEFT, fill=NONE)
         self.timeLabel.pack(expand=True)
+        self.busLabel.pack(pady=15)
         self.dateLabel.pack(expand=True)
-        self.busLabel.pack(pady=50)
 
         # set window attributees
         self.root.title("Live Screen")
@@ -62,7 +62,7 @@ class App():
 
         # bus config
         self.busLabel.configure(fg="white", background="black")
-        self.busLabel.configure(font=("Courier", 50))
+        self.busLabel.configure(font=("Courier", 100))
 
         # time config
         self.timeLabel.configure(fg="white", background="black")
@@ -74,17 +74,18 @@ class App():
 
         self.update()
         self.time_update()
+        self.bus_update()
         self.date_update()
         self.root.mainloop()
 
     # update function
     def update(self):
         try:
-          self.weatherLabel.configure(text=self.get_weather())
+            self.weatherLabel.configure(text=self.get_weather())
         except Exception as e:
-          print("Exception occurred while getting weather: " + str(e))
+            print("Exception occurred while getting weather: " + str(e))
         try:
-            self.get_next_bus()
+            self.busLabel.configure(text=self.get_next_bus())
         except Exception as e:
             print("Exception occurred while getting bus: " +str(e))
         # try:
@@ -98,8 +99,13 @@ class App():
         self.root.after(1000, self.time_update)
 
     def date_update(self):
-            self.dateLabel.configure(text=self.get_current_date())
-            self.root.after(60000, self.time_update)
+        self.dateLabel.configure(text=self.get_current_date())
+        self.root.after(60000, self.time_update)
+
+    def bus_update(self):
+        self.busLabel.configure(text=self.get_next_bus())
+        # every 5 minutes = 300000 ms
+        self.root.after(300000, self.time_update)
 
     # returns weather
     def get_weather(self):
@@ -163,8 +169,21 @@ class App():
         pm_or_am = now.strftime("%p")
 
         best_bus = self.weekday_bus(int(today_hour), int(today_hour_min), pm_or_am)
+        best_bus_str = str(best_bus)
+        best_bus_len = len(best_bus_str)
 
-        return print(best_bus)
+        if best_bus_len == 4:
+            first_two_dig = best_bus_str[:2]
+            last_two_dig = best_bus_str[2:]
+            best_bus_nice_format = first_two_dig + ':' + last_two_dig
+        elif best_bus_len == 3:
+            first_dig = best_bus_str[:1]
+            last_two_dig = best_bus_str[1:]
+            best_bus_nice_format = first_dig + ':' + last_two_dig
+        else:
+            best_bus_nice_format = best_bus
+
+        return best_bus_nice_format
 
     def findClosest(self, list, find):
         found = -1
@@ -190,7 +209,7 @@ class App():
         best_time_pm = self.findClosest(UBCO_pm, today_hour_min);
         best_time_am = self.findClosest(UBCO_am, today_hour_min);
 
-        best_time_test = self.findClosest(UBCO_am, 952);
+        best_time_test = self.findClosest(UBCO_am, 900);
 
         return best_time_test
 
