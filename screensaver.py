@@ -13,11 +13,11 @@ import json
 from tkinter import *
 import googlemaps
 from datetime import datetime
+from datetime import timedelta
 from PIL import Image, ImageTk
 import yaml
 import navitia_wrapper
 import json
-
 
 
 class App():
@@ -84,7 +84,7 @@ class App():
         except Exception as e:
           print("Exception occurred while getting weather: " + str(e))
         try:
-            self.next_bus()
+            self.get_next_bus()
         except Exception as e:
             print("Exception occurred while getting bus: " +str(e))
         # try:
@@ -147,65 +147,132 @@ class App():
 
     # returns current time
     def get_current_date(self):
-      return datetime.now().strftime('%B %d %Y')
+      return datetime.now().strftime('%A, %B %d')
 
+    def get_next_bus(self):
 
-    # Returns the next bus departure time as a string.
-    # From the Artium Student Residence to UBCO.
-    # Next bus time relies on current time.
-    def get_next_bus_departure_time(self):
-        # Request directions via public transit.
         now = datetime.now()
-        directions_result = self.gmaps.directions(self.config['transit_settings']['home_location'],
-                                                  self.config['transit_settings']['destination_location'],
-                                                  mode="transit",
-                                                  departure_time=now)
+        # returns the current day in full mode ie, Monday not Mon
+        today_day = now.strftime("%A")
+        # returns the current hour without leading 0
+        today_hour = now.strftime("%-I")
+        # returns current hour and time without leading 0 in 12 hour system, format: 830 for 8:30
+        today_hour_min = now.strftime("%-I%M")
+        # returns PM or AM
+        pm_or_am = now.strftime("%p")
 
-        # Retrieve departure time and return string.
-        return "Next bus\n" + directions_result[0]['legs'][0]['departure_time']['text']
-    def next_bus(self):
-        try:
+        best_bus = self.weekday_bus(int(today_hour), int(today_hour_min), pm_or_am)
 
-            # Returns the next 3 buses to service the stop in the next 2 hours for route 50
-            my_bus = 'https://api.translink.ca/rttiapi/v1/stops/' \
-                     + self.config['bus_settings']['stop_id'] \
-                     + '/estimates?apikey=' + self.config['bus_settings']['translink_api'] \
-                     + '&count=' + self.config['bus_settings']['bus_count'] \
-                     + '&timeframe=' + self.config['bus_settings']['time_count'] \
-                     + '&routeNo=' + self.config['bus_settings']['route_num']
+        return print(best_bus)
 
-            new_bus = 'https://gtfs.translink.ca/v2/gtfsalerts?apikey=' + self.config['bus_settings']['translink_api']
+    # Returns element closest to target in arr[]
+    def findClosest(self, arr, n, target):
 
-            api_key = "g28dc2772-0abf-463a-a5f8-20c06bc892a7"
-            nav_bus = 'https://api.navitia.io/v1/coverage/ca-bc/routes/route%3AKLW%3A97-Kelowna_R/vehicle_journeys?from_datetime=20190819T060000&items_per_schedule=100&'
-            url = "https://api.navitia.io/v1/coverage"
+        # Corner cases
+        if (target <= arr[0]):
+            return arr[0]
+        if (target >= arr[n - 1]):
+            return arr[n - 1]
 
-            coverage = "ca-bc"
-            nav = navitia_wrapper.Navitia(url=url, token=api_key).instance(coverage)
+            # Doing binary search
+        i = 0;
+        j = n;
+        mid = 0
+        while (i < j):
+            mid = (i + j) / 2
 
-            response = self.session.get(nav_bus,
-                                    auth=('785cb1b9-00e1-47b4-8271-213a4b720888', ''))
-            response_json = json.loads(response.text)
+            if (arr[mid] == target):
+                return arr[mid]
 
-            res_json = json.loads(response.content.decode('utf-8'))
+                # If target is less than array
+            # element, then search in left
+            if (target < arr[mid]):
 
-            # Get the file name for the new file to write
+                # If target is greater than previous
+                # to mid, return closest of two
+                if (mid > 0 and target > arr[mid - 1]):
+                    if(target - arr[mid-1] >= arr[mid] - target):
+                        return arr[mid]
+                    else:
+                        return arr[mid-1]
 
-            # Writing JSON data
-            #with open('my_json_file.json', 'w') as f:
-            #    json.dump(res_json, f)
+                    # Repeat for left half
+                j = mid
 
-            #with open('data.json', 'w') as f:
-            #    json.dump(response, f, ensure_ascii=False, indent=4)
-           # print(res_json)
-            print(res_json["vehicle_journeys"][0]["stop_times"][1]["departure_time"])
+                # If target is greater than mid
+            else:
+                if (mid < n - 1 and target < arr[mid + 1]):
+                    if (target - arr[mid] >= arr[mid+1] - target):
+                        return arr[mid+1]
+                    else:
+                        return arr[mid]
 
 
-            #print(nav.stop_areas("stop_area:OIF:SA:8768600")[0]['label'])
-            #print(response)
-        except Exception as e:
-            print("Exception: " + str(e))
+                    # update i
+                i = mid + 1
 
+        # Only single element left after search
+        return arr[mid]
+
+
+
+    def weekday_bus(self, today_hour, today_hour_min,pm_or_am):
+        UBCO_am = [608, 638, 653, 707, 722, 737, 752, 807, 822, 837, 907, 937,
+                      1007, 1036, 1106, 1136]
+        UBCO_pm = [1205, 1235, 105, 135, 149, 204, 219, 239, 254, 309, 324, 339,
+                         354, 409, 424, 439, 509, 525, 542, 558, 613, 625, 643, 713,
+                         744, 814, 914, 944, 1014, 1044, 1114, 1146, 1216]
+
+        am_length = len(UBCO_am)
+        pm_length = len(UBCO_pm)
+
+        #best_time = self.findClosest(UBCO_pm, pm_length, today_hour_min);
+        best_time = self.findClosest(UBCO_pm, pm_length, today_hour_min);
+        arr = [1, 2, 4, 5, 6, 6, 8, 9]
+        n = len(arr)
+        target = 11
+        #best_time = self.findClosest(arr, n, target)
+        return best_time
+        #print(best_time)
+
+
+# Returns the next bus departure time as a string.
+# From the Artium Student Residence to UBCO.
+# Next bus time relies on current time.
+# def get_next_bus_departure_time(self):
+#     # Request directions via public transit.
+#     now = datetime.now()
+#   #OLD WAY OF DOING IT VIA GOOGLE MAPS:
+#     directions_result = self.gmaps.directions(self.config['transit_settings']['home_location'],
+#                                               self.config['transit_settings']['destination_location'],
+#                                               mode="transit",
+#                                               departure_time=now)
+#
+#     # Retrieve departure time and return string.
+#      return "Next bus\n" + directions_result[0]['legs'][0]['departure_time']['text']
+#
+#     # Works with Vancouver's translink: as of Aug 19 2019
+#     new_bus = 'https://gtfs.translink.ca/v2/gtfsalerts?apikey=' + self.config['bus_settings']['translink_api']
+# def next_bus(self):
+#     try:
+#         api_key = "g28dc2772-0abf-463a-a5f8-20c06bc892a7"
+#         nav_bus = 'https://api.navitia.io/v1/coverage/ca-bc/routes/route%3AKLW%3A97-Kelowna_R/vehicle_journeys?from_datetime=20190819T060000&items_per_schedule=100&'
+#         url = "https://api.navitia.io/v1/coverage"
+#
+#         coverage = "ca-bc"
+#         nav = navitia_wrapper.Navitia(url=url, token=api_key).instance(coverage)
+#
+#         response = self.session.get(nav_bus,
+#                                 auth=('785cb1b9-00e1-47b4-8271-213a4b720888', ''))
+#         response_json = json.loads(response.text)
+#
+#         res_json = json.loads(response.content.decode('utf-8'))
+#
+#         print(res_json["vehicle_journeys"][0]["stop_times"][0]["stop_point"]["name"],
+#               res_json["vehicle_journeys"][0]["stop_times"][0]["departure_time"])
+#
+#     except Exception as e:
+#         print("Exception: " + str(e))
 
 
 
