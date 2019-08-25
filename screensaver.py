@@ -1,6 +1,5 @@
-
 # importing
-#you need to install the following to run this file:
+# you need to install the following to run this file:
 # requests
 # tkinter
 # googlemaps
@@ -87,7 +86,7 @@ class App():
         try:
             self.busLabel.configure(text=self.get_next_bus())
         except Exception as e:
-            print("Exception occurred while getting bus: " +str(e))
+            print("Exception occurred while getting bus: " + str(e))
         # try:
         #   self.busLabel.configure(text=self.get_next_bus_departure_time())
         # except Exception as e:
@@ -107,14 +106,11 @@ class App():
         # every 5 minutes = 300000 ms
         self.root.after(1000, self.time_update)
 
-
-
     # returns weather
     def get_weather(self):
         api_key = self.config['weather_settings']['openweather_api_key']
         parsa_api = 'cb52bfd59abded6aec05d3a17a7dc0c8'
         city = self.config['weather_settings']['city']
-
 
         response = self.session.get("http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + api_key)
         res_json = json.loads(response.content.decode('utf-8'))
@@ -122,14 +118,12 @@ class App():
         current_temp = int(round(res_json["main"]["temp"] - 273.15, 0))
         current_weather = res_json["weather"][0]["main"]
 
-
         image = Image.open(self.get_weather_icon(current_weather))
         image = image.resize((100, 100), Image.ANTIALIAS)
         photo = ImageTk.PhotoImage(image=image)
 
         self.weatherIcon.configure(image=photo)
         self.weatherIcon.image = photo
-
 
         low_temp = int(res_json["main"]["temp_min"] - 273.15)
         high_temp = int(res_json["main"]["temp_max"] - 273.15)
@@ -141,11 +135,11 @@ class App():
 
     def get_weather_icon(self, weather):
         icon_map = {
-          "Clear": "images/clear_sky.png",
-          "Haze": "images/clear_sky.png",
-          "Clouds": "images/cloudy.png",
-          "Snow": "images/snow.png",
-          "Rain": "images/rain.png"
+            "Clear": "images/clear_sky.png",
+            "Haze": "images/clear_sky.png",
+            "Clouds": "images/cloudy.png",
+            "Snow": "images/snow.png",
+            "Rain": "images/rain.png"
         }
 
         return icon_map[weather]
@@ -156,13 +150,11 @@ class App():
 
     # returns current time
     def get_current_date(self):
-      return datetime.now().strftime('%A, %B %d')
+        return datetime.now().strftime('%A, %B %d')
 
     def eta(self, best_bus, today_hour_min):
         eta = best_bus - today_hour_min
         return eta
-
-
 
     def get_next_bus(self):
 
@@ -186,33 +178,23 @@ class App():
             eta_next_bus = eta_next_bus - 40
         eta_next_bus_str = str(eta_next_bus)
 
-        if eta_next_bus == 20:
-            self.busLabel.configure(fg="yellow")
-        elif eta_next_bus == 15:
-            self.busLabel.configure(fg="orange")
-        elif eta_next_bus == 14:
-            self.busLabel.configure(fg="orange2")
-        elif eta_next_bus == 13:
-            self.busLabel.configure(fg="orange3")
-        elif eta_next_bus == 12:
-            self.busLabel.configure(fg="dark orange")
-        elif eta_next_bus == 11:
-            self.busLabel.configure(fg="DarkOrange1")
-        elif eta_next_bus == 10:
-            self.busLabel.configure(fg="DarkOrange2")
-        elif eta_next_bus == 5:
-            self.busLabel.configure(fg="orange red")
-        elif eta_next_bus == 4:
-            self.busLabel.configure(fg="OrangeRed2")
-        elif eta_next_bus == 3:
-            self.busLabel.configure(fg="OrangeRed3")
-        elif eta_next_bus == 2:
-            self.busLabel.configure(fg="red")
-        elif eta_next_bus == 1:
-            self.busLabel.configure(fg="red2")
-        else:
-            self.busLabel.configure(fg="azure")
+        colours = ["LightYellow", "Yellow", "yellow2", "yellow3", "salmon", "light coral",  # 20-15
+                   "orange", "orange1", "orange2", "orange3", "dark orange",                # 14-10
+                   "sienna1", "sienna2", "DarkOrange1", "DarkOrange2",                      # 9-6
+                   "orange red", "OrangeRed2", "OrangeRed3", "red", "red2",                  # 5-1
+                   "white"]
 
+        all_eta = [20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+
+        if eta_next_bus > 20:
+            self.busLabel.configure(fg=colours[21])
+        else:
+            cIndex = 0
+            for x in range(0, len(all_eta)):
+                if eta_next_bus == all_eta[cIndex]:
+                    self.busLabel.configure(fg=colours[cIndex])
+                else:
+                    cIndex = cIndex + 1
 
         if best_bus_len == 4:
             first_two_dig = best_bus_str[:2]
@@ -224,7 +206,6 @@ class App():
             best_bus_nice_format = first_dig + ':' + last_two_dig
         else:
             best_bus_nice_format = best_bus
-
 
         return eta_next_bus_str + ' mins till \nbus @ ' + best_bus_nice_format
 
@@ -256,10 +237,9 @@ class App():
         # <- Note indent level, this is OUTSIDE the for loop.
         if found == -1:
             return -99999
-        return list[found+1]
+        return list[found + 1]
 
-
-    def weekday_bus(self, today_hour, today_hour_min,pm_or_am):
+    def weekday_bus(self, today_hour, today_hour_min, pm_or_am):
         UBCO_am = [608, 638, 653, 707, 722, 737, 752, 807, 822, 837, 907, 937, 1007, 1036, 1106, 1136, 1205, 1235]
         UBCO_pm = [105, 135, 149, 204, 219, 239, 254, 309, 324, 339, 354, 409, 424, 439, 509, 525, 542, 558, 613, 625,
                    643, 713, 744, 814, 914, 944, 1014, 1044, 1114, 1146, 1216]
@@ -326,8 +306,6 @@ class App():
     #
     #     except Exception as e:
     #         print("Exception: " + str(e))
-
-
 
 
 app = App()
