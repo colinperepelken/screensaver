@@ -152,7 +152,7 @@ class App():
 
     # returns current time
     def get_current_time(self):
-        return datetime.now().strftime("%I:%M %p")
+        return datetime.now().strftime("%-I:%M %p")
 
     # returns current time
     def get_current_date(self):
