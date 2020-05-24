@@ -1,0 +1,34 @@
+# Raspberry PI Screensaver
+# Custom Configuration File
+# Edit below settings to customize your screensaver.
+
+# Settings for bus departure time label.
+transit_settings:
+  home_location: The Artium Student Residence, Kelowna, BC
+  destination_location: UBC Okanagan, Kelowna, BC
+
+# Settings for weather display.
+weather_settings:
+  city: Kelowna
+  openweather_api_key: f5988e28703d9fdcb99201c66e8eabcf
+
+# General settings.
+google_maps_api_key: AIzaSyCZ_3BKxqS5_SS41sUchUUfd6Sq4jiY6-A
+
+bus_settings:
+  # api key
+  translink_api: D4FI6Xtu0cQTC2evkG5q
+
+  # Harvey at Kirschner - Parkinson Station stop ID
+  #stop_id: '102989'
+  stop_id: '60980'
+
+  # route # (3 digits)
+  route_num: '50'
+
+  # bus count - used for determining the next __ buses to x
+  bus_count: '3'
+
+  # time - in minutes - used for determining buses in the __ minutes
+  # 2 hours
+  time_count: '120'
