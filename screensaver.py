@@ -61,7 +61,7 @@ class App():
           self.weatherLabel.configure(text=self.get_weather())
         except Exception as e:
           print("Exception occured while getting weather: " + e)
-        self.busLabel.configure(text=self.get_next_bus_departure_time())
+        #self.busLabel.configure(text=self.get_next_bus_departure_time())
         self.root.after(5000, self.update)
 
     def time_update(self):
@@ -116,26 +116,26 @@ class App():
 
     # returns current time
     def get_current_date(self):
-      return datetime.now().strftime('%Y-%m-%d')
+      return datetime.now().strftime('%B %d, %Y')
 
 
     # Returns the next bus departure time as a string.
     # From the Artium Student Residence to UBCO.
     # Next bus time relies on current time.
     #
-    def get_next_bus_departure_time(self):
-
-        # Initialize Google Maps API.
-        gmaps = googlemaps.Client(key='AIzaSyCZ_3BKxqS5_SS41sUchUUfd6Sq4jiY6-A')
-
-        # Request directions via public transit.
-        now = datetime.now()
-        directions_result = gmaps.directions("The Artium Student Residence, Kelowna",
-                                             "UBC Okanagan, Kelowna, BC",
-                                             mode="transit",
-                                             departure_time=now)
-
-        # Retrieve departure time and return string.
-        return "Next bus to UBCO\n" + directions_result[0]['legs'][0]['departure_time']['text']
+    # def get_next_bus_departure_time(self):
+    #
+    #     # Initialize Google Maps API.
+    #     gmaps = googlemaps.Client(key='AIzaSyCZ_3BKxqS5_SS41sUchUUfd6Sq4jiY6-A')
+    #
+    #     # Request directions via public transit.
+    #     now = datetime.now()
+    #     directions_result = gmaps.directions("The Artium Student Residence, Kelowna",
+    #                                          "UBC Okanagan, Kelowna, BC",
+    #                                          mode="transit",
+    #                                          departure_time=now)
+    #
+    #     # Retrieve departure time and return string.
+    #     return "Next bus to UBCO\n" + directions_result[0]['legs'][0]['departure_time']['text']
 
 app = App()
