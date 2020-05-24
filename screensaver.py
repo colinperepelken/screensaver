@@ -130,7 +130,7 @@ class App():
         low_temp_text = "Low: " + str(low_temp) + " °C\n"
         high_temp_text = "High: " + str(high_temp) + " °C"
         text = weather_text + low_temp_text + high_temp_text
-        return text
+        return str(text)
 
     def get_weather_icon(self, weather):
         icon_map = {
